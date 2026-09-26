@@ -3,20 +3,18 @@ const fs = require('fs');
 const path = require('path');
 const { pgPool } = require('../config/postgres');
 
+// Base number used by every demo identity — no other number appears anywhere.
+const BASE_NUMBER = '+916398899337';
+
 // ---------------------------------------------------------------------
-// Dummy identities for the personal/demo flow. One row per contact, already
-// in the shape the Send tab shows (state/city/company + one mobile number).
+// Dummy identities for the personal/demo flow. Exactly four contacts, all
+// sharing BASE_NUMBER, in the shape the Send tab shows.
 // ---------------------------------------------------------------------
 const IDENTITIES = [
-  [4821, 'Sharda Book Traders',        'Uttar Pradesh', 'Lucknow',  'Sharda Book Traders Pvt Ltd', '+919839000001', 'Retail bookseller'],
-  [1193, 'Ramesh & Sons Distributors', 'Uttar Pradesh', 'Kanpur',   'Ramesh & Sons Distributors',  '+919876500002', 'Wholesale distributor'],
-  [7740, 'Vidya Book Depot',           'Uttar Pradesh', 'Varanasi', 'Vidya Book Depot',            '+919123400003', 'Retail bookseller'],
-  [2054, 'Gupta Educational Store',    'Uttar Pradesh', 'Agra',     'Gupta Educational Store',     '+919810200004', 'Retail bookseller'],
-  [3312, 'Sunrise Publishers',         'Rajasthan',     'Jaipur',   'Sunrise Publishers & Co',     '+919414300005', 'Wholesale distributor'],
-  [5907, 'National Book House',        'Delhi',         'New Delhi','National Book House',         '+919811200006', 'Wholesale distributor'],
-  [6120, 'Modern Stationers',          'Madhya Pradesh','Indore',   'Modern Stationers',           '+919826100007', 'Retail bookseller'],
-  [8455, 'Knowledge Point',            'Bihar',         'Patna',    'Knowledge Point Educare',     '+919943100008', 'Wholesale distributor'],
-  [9001, 'Test Recipient',             'Uttar Pradesh', 'Lucknow',  'Test Contact',                '+916398899337', 'Test']
+  [4821, 'Sharda Book Traders',        'Uttar Pradesh', 'Lucknow',   'Sharda Book Traders Pvt Ltd', BASE_NUMBER, 'Retail bookseller'],
+  [1193, 'Ramesh & Sons Distributors', 'Uttar Pradesh', 'Kanpur',    'Ramesh & Sons Distributors',  BASE_NUMBER, 'Wholesale distributor'],
+  [7740, 'Vidya Book Depot',           'Uttar Pradesh', 'Varanasi',  'Vidya Book Depot',            BASE_NUMBER, 'Retail bookseller'],
+  [3312, 'Sunrise Publishers',         'Rajasthan',     'Jaipur',    'Sunrise Publishers & Co',     BASE_NUMBER, 'Wholesale distributor']
 ];
 
 const REMARKS = [
@@ -27,21 +25,33 @@ const REMARKS = [
   'Minor delay but the support team kept us informed.'
 ];
 
-// Dummy requests so the dashboard has something meaningful to show. Each
-// token is fixed, which makes the seed idempotent (safe to run repeatedly).
+// Dummy requests so every identity's dashboard and Review drill-down has
+// data. Four requests per identity (16 total). Each token is fixed, and the
+// seed clears old rows first, so re-running yields exactly this state.
 const DEMO_REQUESTS = [
-  { token: 'demotoken001', identityId: 4821, template: 'Retail bookseller feedback',    status: 'completed', createdDaysAgo: 12, software: 'adc' },
-  { token: 'demotoken002', identityId: 1193, template: 'Wholesale distributor feedback', status: 'completed', createdDaysAgo: 10, software: 'sanchar' },
-  { token: 'demotoken003', identityId: 7740, template: 'Retail bookseller feedback',    status: 'completed', createdDaysAgo: 8,  software: 'adc' },
-  { token: 'demotoken004', identityId: 3312, template: 'Wholesale distributor feedback', status: 'completed', createdDaysAgo: 6,  software: 'tdc' },
-  { token: 'demotoken005', identityId: 2054, template: 'Retail bookseller feedback',    status: 'completed', createdDaysAgo: 4,  software: 'adc' },
-  { token: 'demotoken006', identityId: 5907, template: 'Wholesale distributor feedback', status: 'viewed',    createdDaysAgo: 3,  software: 'sanchar' },
-  { token: 'demotoken007', identityId: 6120, template: 'Retail bookseller feedback',    status: 'viewed',    createdDaysAgo: 3,  software: 'adc' },
-  { token: 'demotoken008', identityId: 8455, template: 'Wholesale distributor feedback', status: 'sent',      createdDaysAgo: 2,  software: 'tdc' },
-  { token: 'demotoken009', identityId: 4821, template: 'Retail bookseller feedback',    status: 'sent',      createdDaysAgo: 2,  software: 'adc' },
-  { token: 'demotoken010', identityId: 7740, template: 'Wholesale distributor feedback', status: 'sent',      createdDaysAgo: 1,  software: 'sanchar' },
-  { token: 'demotoken011', identityId: 1193, template: 'Retail bookseller feedback',    status: 'pending',   createdDaysAgo: 1,  software: 'adc' },
-  { token: 'demotoken012', identityId: 3312, template: 'Wholesale distributor feedback', status: 'pending',   createdDaysAgo: 0,  software: 'tdc' }
+  // 4821 — Sharda Book Traders
+  { token: 'demotoken001', identityId: 4821, template: 'Retail bookseller feedback',     status: 'completed', createdDaysAgo: 12, software: 'adc' },
+  { token: 'demotoken002', identityId: 4821, template: 'Wholesale distributor feedback', status: 'completed', createdDaysAgo: 9,  software: 'sanchar' },
+  { token: 'demotoken003', identityId: 4821, template: 'Retail bookseller feedback',     status: 'viewed',    createdDaysAgo: 5,  software: 'adc' },
+  { token: 'demotoken004', identityId: 4821, template: 'Wholesale distributor feedback', status: 'sent',      createdDaysAgo: 2,  software: 'tdc' },
+
+  // 1193 — Ramesh & Sons Distributors
+  { token: 'demotoken005', identityId: 1193, template: 'Wholesale distributor feedback', status: 'completed', createdDaysAgo: 11, software: 'sanchar' },
+  { token: 'demotoken006', identityId: 1193, template: 'Retail bookseller feedback',     status: 'completed', createdDaysAgo: 8,  software: 'adc' },
+  { token: 'demotoken007', identityId: 1193, template: 'Wholesale distributor feedback', status: 'viewed',    createdDaysAgo: 4,  software: 'sanchar' },
+  { token: 'demotoken008', identityId: 1193, template: 'Retail bookseller feedback',     status: 'sent',      createdDaysAgo: 1,  software: 'adc' },
+
+  // 7740 — Vidya Book Depot
+  { token: 'demotoken009', identityId: 7740, template: 'Retail bookseller feedback',     status: 'completed', createdDaysAgo: 10, software: 'adc' },
+  { token: 'demotoken010', identityId: 7740, template: 'Wholesale distributor feedback', status: 'completed', createdDaysAgo: 7,  software: 'tdc' },
+  { token: 'demotoken011', identityId: 7740, template: 'Retail bookseller feedback',     status: 'viewed',    createdDaysAgo: 3,  software: 'adc' },
+  { token: 'demotoken012', identityId: 7740, template: 'Wholesale distributor feedback', status: 'sent',      createdDaysAgo: 1,  software: 'sanchar' },
+
+  // 3312 — Sunrise Publishers
+  { token: 'demotoken013', identityId: 3312, template: 'Wholesale distributor feedback', status: 'completed', createdDaysAgo: 9,  software: 'tdc' },
+  { token: 'demotoken014', identityId: 3312, template: 'Retail bookseller feedback',     status: 'completed', createdDaysAgo: 6,  software: 'adc' },
+  { token: 'demotoken015', identityId: 3312, template: 'Wholesale distributor feedback', status: 'viewed',    createdDaysAgo: 3,  software: 'sanchar' },
+  { token: 'demotoken016', identityId: 3312, template: 'Retail bookseller feedback',     status: 'sent',      createdDaysAgo: 0,  software: 'adc' }
 ];
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -77,6 +87,15 @@ async function ensureSchema() {
     FROM feedback_requests r
     JOIN feedback_templates t ON t.id = r.template_id
   `);
+}
+
+// The seed owns identities + requests. Clear them first so re-running removes
+// any old testing data and leaves exactly the four identities and 16 requests
+// below. Answers cascade with their request.
+async function resetDemoData() {
+  await pgPool.query('DELETE FROM feedback_requests');
+  await pgPool.query('DELETE FROM identities');
+  console.log('• Cleared previous identities and requests.');
 }
 
 async function seedIdentities() {
@@ -177,6 +196,7 @@ function buildAnswer(q, i) {
 
 async function seed() {
   await ensureSchema();
+  await resetDemoData();
   await seedIdentities();
   await seedTemplates();
   await seedDemoRequests();
