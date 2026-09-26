@@ -25,8 +25,10 @@ runs on your own Node.js + PostgreSQL.
 - **Multi-color themes** — 8 accent colors plus light/dark mode, a top-navbar
   layout, and a subtle animated background (gradient orbs, dot grid, particles).
   Saved per browser.
-- **Zero-config demo** — `npm run seed` loads dummy contacts, templates, and
-  requests so every screen has data on first run.
+- **Zero-config demo** — `npm run seed` loads 4 dummy contacts (all on the base
+  number `+916398899337`) and 4 requests each, plus starter templates, so every
+  dashboard and Review drill-down has data on first run. Re-running it clears
+  old demo rows first.
 
 ---
 
@@ -38,7 +40,7 @@ cd feedloop
 npm install
 cp .env.example .env        # set PG_* (Postgres must be running)
 npm run migrate             # create tables
-npm run seed                # load demo contacts + templates + requests
+npm run seed                # load 4 demo contacts (base number) + 4 requests each
 npm start                   # http://localhost:3000
 ```
 
@@ -52,8 +54,8 @@ providers when you're ready (below).
 ### Test a send from the CLI
 
 ```bash
-npm run send:test -- 9876543210          # or any number, with country code if needed
-npm run send:test -- 9876543210 "Priya Sharma"
+npm run send:test -- 6398899337          # or any number, with country code if needed
+npm run send:test -- 6398899337 "Priya Sharma"
 ```
 
 This creates a real request, delivers it through your configured
@@ -65,8 +67,9 @@ This creates a real request, delivers it through your configured
 
 The Send tab has two modes:
 
-1. **Directory** — search the seeded `identities` table by name or ID and pick a
-   contact.
+1. **Directory** — search the seeded `identities` table (4 demo contacts) by name
+   or ID and pick a contact. Every demo contact uses the base number
+   `+916398899337`.
 2. **Enter manually** — type a name and phone number (company/city optional) and
    send immediately. Nothing is saved to your directory; the recipient is
    snapshotted onto the request.
@@ -78,10 +81,10 @@ POST /api/feedback/send
 Content-Type: application/json
 
 # From your directory:
-{ "identityId": 4821, "templateId": 1, "mobileNumber": "+919839000001" }
+{ "identityId": 4821, "templateId": 1, "mobileNumber": "+916398899337" }
 
 # Ad-hoc (any number, no directory row):
-{ "name": "Priya Sharma", "mobileNumber": "+919876543210", "templateId": 1 }
+{ "name": "Priya Sharma", "mobileNumber": "+916398899337", "templateId": 1 }
 ```
 
 ---
@@ -106,7 +109,7 @@ Prints the message to the server console. Great for development.
 POSTs JSON to any URL you control:
 
 ```json
-{ "to": "+919876543210", "phone": "919876543210", "name": "Priya Sharma",
+{ "to": "+916398899337", "phone": "916398899337", "name": "Priya Sharma",
   "link": "https://your-host/feedback/abc123", "message": "Hi Priya Sharma, ..." }
 ```
 
