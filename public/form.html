@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FeedLoop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<link rel="stylesheet" href="/css/theme.css">
+<script>
+  (function () {
+    try {
+      var root = document.documentElement;
+      var t = localStorage.getItem('feedloop-theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      var a = localStorage.getItem('feedloop-accent') || 'indigo';
+      root.setAttribute('data-theme', t);
+      root.setAttribute('data-accent', a);
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+<div class="form-shell">
+  <div class="form-card-wrap">
+    <div class="form-progress-track"><div class="form-progress-fill" id="formProgress"></div></div>
+    <div class="card" id="formCard">Loading…</div>
+  </div>
+</div>
+<script src="/js/theme.js"></script>
+<script src="/js/form.js"></script>
+</body>
+</html>

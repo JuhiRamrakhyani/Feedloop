@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FeedLoop — Admin</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
+<link rel="stylesheet" href="/css/theme.css">
+<script>
+  (function () {
+    try {
+      var root = document.documentElement;
+      var t = localStorage.getItem('feedloop-theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      var a = localStorage.getItem('feedloop-accent') || 'indigo';
+      root.setAttribute('data-theme', t);
+      root.setAttribute('data-accent', a);
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+<header class="navbar">
+  <div class="nav-inner">
+    <div class="brand">
+      <span class="brand-mark"><span class="brand-dot"></span><span data-app-name>FeedLoop</span></span>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button data-tab="dashboard" class="active" role="tab">Dashboard</button>
+      <button data-tab="templates" role="tab">Templates</button>
+      <button data-tab="send" role="tab">Send</button>
+      <button data-tab="review" role="tab">Review</button>
+    </nav>
+    <div class="nav-actions">
+      <span class="provider-badge" id="providerBadge">delivery</span>
+      <div id="themeControl"></div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <header class="page-head">
+    <h1 class="pagehead">Feedback forms</h1>
+    <p class="pagesub">Send a custom feedback form to anyone by name, ID, or phone number.</p>
+  </header>
+
+  <!-- DASHBOARD -->
+  <div class="panel active" id="panel-dashboard">
+    <div id="dashboardBody"></div>
+  </div>
+
+  <!-- TEMPLATES -->
+  <div class="panel" id="panel-templates">
+    <div id="templatesBody"></div>
+  </div>
+
+  <!-- SEND -->
+  <div class="panel" id="panel-send">
+    <div class="send-grid">
+      <div class="card send-step">
+        <div class="send-step-head"><span class="step-badge">1</span><h3>Recipient</h3></div>
+        <p class="desc">Search your directory, or enter any name and number directly.</p>
+        <div class="segmented" id="recipientMode">
+          <button type="button" data-mode="directory" class="on">Directory</button>
+          <button type="button" data-mode="manual">Enter manually</button>
+        </div>
+        <div id="directoryPane">
+          <label>Search by name or ID</label>
+          <input type="text" id="searchInput" placeholder="e.g. sharda or 4821">
+          <div id="identityResults" style="margin-top:12px;"></div>
+        </div>
+        <div id="manualPane" style="display:none;">
+          <label>Recipient name</label>
+          <input type="text" id="manualName" placeholder="e.g. Priya Sharma">
+          <label>Phone number</label>
+          <input type="tel" id="manualPhone" placeholder="+91 98xxxxxxxx">
+          <label>Company (optional)</label>
+          <input type="text" id="manualCompany" placeholder="e.g. Sharma Books">
+          <label>City (optional)</label>
+          <input type="text" id="manualCity" placeholder="e.g. Lucknow">
+        </div>
+      </div>
+
+      <div class="card send-step" id="previewCard" style="display:none;">
+        <div class="send-step-head"><span class="step-badge">2</span><h3>Template</h3></div>
+        <div id="previewBody"></div>
+        <label>Choose a template</label>
+        <div id="templateResults"></div>
+        <label>Send to</label>
+        <div id="numberPicker"></div>
+      </div>
+
+      <div class="card send-step" id="sendCard" style="display:none;">
+        <div class="send-step-head"><span class="step-badge">3</span><h3>Send</h3></div>
+        <p class="desc">Review the details and send the feedback link.</p>
+        <div id="sendSummary"></div>
+        <button class="btn btn-primary" id="sendBtn" style="margin-top:16px;">Send feedback link</button>
+        <div id="sendResult"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVIEW -->
+  <div class="panel" id="panel-review">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h3>Submitted feedback</h3>
+          <p class="desc" style="margin:4px 0 0;">Select a response to see the full answer set.</p>
+        </div>
+      </div>
+      <div id="reviewList"></div>
+    </div>
+  </div>
+</main>
+
+<script src="/js/theme.js"></script>
+<script src="/js/admin.js"></script>
+</body>
+</html>

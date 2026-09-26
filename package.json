@@ -1,0 +1,50 @@
+{
+  "name": "feedloop",
+  "version": "1.0.0",
+  "description": "Free, open-source feedback forms. Build a custom form, send the link to anyone by phone number or ID, and review responses on a dashboard.",
+  "main": "src/server.js",
+  "license": "MIT",
+  "author": "Juhi <enggheads5@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/feedloop.git"
+  },
+  "homepage": "https://github.com/your-username/feedloop#readme",
+  "bugs": {
+    "url": "https://github.com/your-username/feedloop/issues"
+  },
+  "keywords": [
+    "feedback",
+    "surveys",
+    "forms",
+    "whatsapp",
+    "baileys",
+    "express",
+    "postgresql",
+    "self-hosted",
+    "open-source"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "migrate": "node src/db/migrate.js",
+    "seed": "node src/db/seed.js",
+    "send:test": "node src/scripts/send-test.js",
+    "whatsapp:login": "node src/scripts/whatsapp-login.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^7.1.0",
+    "pg": "^8.12.0"
+  },
+  "optionalDependencies": {
+    "baileys": "^6.7.24",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
